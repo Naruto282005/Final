@@ -9,6 +9,7 @@ class PostList extends Component
 {
     public $category = 'all'; // Current selected category
     public $sortBy = 'recent'; // ✅ CHANGED: Sorting method - default to 'recent' so new posts appear first
+    public $search; // Current search term from the global search bar
 
     /**
      * Use the main layout
@@ -26,9 +27,35 @@ class PostList extends Component
     /**
      * Change sorting method
      */
-    public function sortBy($method)
+    public function setSortBy($method)
     {
         $this->sortBy = $method;
+    }
+
+    /**
+     * Delete a post owned by the current user
+     */
+    public function deletePost($postId)
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        $post = Post::find($postId);
+
+        if (!$post) {
+            session()->flash('error', 'Post not found.');
+            return;
+        }
+
+        if ($post->user_id !== auth()->id()) {
+            session()->flash('error', 'You are not allowed to delete this post.');
+            return;
+        }
+
+        $post->delete();
+
+        session()->flash('message', 'Post deleted successfully.');
     }
 
     /**
@@ -67,8 +94,21 @@ class PostList extends Component
 
     public function render()
     {
+        // Sync search term from query string
+        $this->search = request('q');
+
         // Get posts based on filters
         $query = Post::with(['user', 'comments']);
+
+        // Apply text search if provided
+        if (!empty($this->search)) {
+            $search = trim($this->search);
+
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                  ->orWhere('content', 'LIKE', "%{$search}%");
+            });
+        }
 
         // Filter by category
         if ($this->category !== 'all') {

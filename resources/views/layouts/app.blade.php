@@ -39,13 +39,16 @@
                     <!-- Search Bar -->
                     <div class="flex items-center flex-1 px-2 justify-center">
                         <form action="{{ route('home') }}" method="GET" class="w-full max-w-md">
-                            <div class="relative">
+                            <div class="relative group">
+                                <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400 group-focus-within:text-blue-500">
+                                </span>
+
                                 <input
                                     type="text"
                                     name="q"
                                     value="{{ request('q') }}"
-                                    placeholder="Search posts..."
-                                    class="w-80 h-9 rounded-lg border border-gray-300 bg-white/70 backdrop-blur px-3 py-1.5 pl-10 pr-3 text-sm shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-200 placeholder:text-gray-400"
+                                    placeholder="Search posts, topics, or keywords..."
+                                    class="w-full sm:w-80 h-10 rounded-full border border-gray-200/80 bg-white/80 backdrop-blur px-4 pl-9 pr-4 text-sm shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-200/80 placeholder:text-gray-400 transition-all duration-200 group-focus-within:shadow-md group-hover:shadow-md"
                                 />
                             </div>
                         </form>
