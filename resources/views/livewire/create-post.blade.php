@@ -50,6 +50,37 @@
                 @enderror
             </div>
 
+            {{-- Media Upload --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Image / Video (optional)</label>
+                <input type="file" 
+                       wire:model="media" 
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                @error('media') 
+                    <span class="text-red-500 text-sm">{{ $message }}</span> 
+                @enderror
+
+                @if ($media)
+                    <div class="mt-3 space-y-2">
+                        @php
+                            $mime = $media->getMimeType();
+                            $isImage = str_starts_with($mime, 'image/');
+                            $isVideo = str_starts_with($mime, 'video/');
+                        @endphp
+
+                        @if ($isImage)
+                            <img src="{{ $media->temporaryUrl() }}" alt="Preview" class="max-h-64 rounded-lg border border-gray-200 object-contain">
+                        @elseif ($isVideo)
+                            <video controls class="w-full max-h-80 rounded-lg border border-gray-200">
+                                <source src="{{ $media->temporaryUrl() }}">
+                            </video>
+                        @endif
+
+                        <span class="text-xs text-gray-500">Preview of the file you selected. It will be uploaded when you post.</span>
+                    </div>
+                @endif
+            </div>
+
             {{-- Submit Button --}}
             <div class="flex justify-end gap-3">
                 <a href="{{ route('home') }}" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">

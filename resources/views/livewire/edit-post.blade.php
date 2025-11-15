@@ -57,6 +57,55 @@
                 @enderror
             </div>
 
+            {{-- Media Upload --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Image / Video</label>
+
+                @if ($post->media_path)
+                    <div class="mb-3 space-y-2">
+                        @if ($post->media_type === 'image')
+                            <img src="{{ asset('storage/' . $post->media_path) }}" alt="Post media" class="max-h-64 rounded-lg border border-gray-200">
+                        @elseif ($post->media_type === 'video')
+                            <video controls class="w-full max-h-96 rounded-lg border border-gray-200">
+                                <source src="{{ asset('storage/' . $post->media_path) }}">
+                            </video>
+                        @endif
+
+                        <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                            <input type="checkbox" wire:model="removeMedia" class="rounded border-gray-300">
+                            <span>Remove current media</span>
+                        </label>
+                    </div>
+                @endif
+
+                <input type="file" 
+                       wire:model="media" 
+                       class="input-field">
+                @error('media') 
+                    <span class="text-red-500 text-sm">{{ $message }}</span> 
+                @enderror
+
+                @if ($media)
+                    <div class="mt-2 space-y-2">
+                        @php
+                            $mime = $media->getMimeType();
+                            $isImage = str_starts_with($mime, 'image/');
+                            $isVideo = str_starts_with($mime, 'video/');
+                        @endphp
+
+                        @if ($isImage)
+                            <img src="{{ $media->temporaryUrl() }}" alt="New media preview" class="max-h-64 rounded-lg border border-gray-200 object-contain">
+                        @elseif ($isVideo)
+                            <video controls class="w-full max-h-80 rounded-lg border border-gray-200">
+                                <source src="{{ $media->temporaryUrl() }}">
+                            </video>
+                        @endif
+
+                        <span class="text-xs text-gray-500">New file selected. It will replace the current media when you update.</span>
+                    </div>
+                @endif
+            </div>
+
             {{-- Submit Buttons --}}
             <div class="flex justify-end gap-3">
                 <a href="{{ route('post.show', $post->id) }}" class="btn-secondary">

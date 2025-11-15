@@ -66,7 +66,9 @@
                             <span>•</span>
                             <span>{{ $comment->created_at->diffForHumans() }}</span>
                         </div>
-                        <p class="text-gray-700">{{ $comment->content }}</p>
+                        <p class="text-gray-700 whitespace-pre-wrap leading-relaxed" style="word-break: break-word; overflow-wrap: anywhere;">
+                            {{ $comment->content }}
+                        </p>
                     </div>
                 </div>
             </div>

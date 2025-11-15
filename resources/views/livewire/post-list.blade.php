@@ -146,8 +146,23 @@
                             <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 mb-2 transition-colors duration-200">
                                 {{ $post->title }}
                             </h3>
-                            <p class="text-gray-600 line-clamp-2">{{ $post->content }}</p>
                         </a>
+
+                        @if ($post->media_path)
+                            <div class="mt-4 flex justify-center">
+                                @if ($post->media_type === 'image')
+                                    <img src="{{ asset('storage/' . $post->media_path) }}" alt="Post media" class="w-full max-w-xl max-h-96 object-contain rounded-lg border border-gray-200">
+                                @elseif ($post->media_type === 'video')
+                                    <video controls class="w-full max-w-xl max-h-96 rounded-lg border border-gray-200">
+                                        <source src="{{ asset('storage/' . $post->media_path) }}">
+                                    </video>
+                                @endif
+                            </div>
+                        @endif
+
+                        <div class="mt-4 text-gray-600">
+                            <p class="whitespace-pre-wrap leading-relaxed" style="word-break: break-word; overflow-wrap: anywhere;">{{ trim($post->content) }}</p>
+                        </div>
 
                         <div class="flex gap-6 mt-4">
                             <a href="{{ route('post.show', $post->id) }}" 

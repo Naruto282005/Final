@@ -3,20 +3,26 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use App\Models\Post;
 
 class EditPost extends Component
 {
+    use WithFileUploads;
+
     public $post; // The post being edited
     public $title = '';
     public $content = '';
     public $category = '';
+    public $media;
+    public $removeMedia = false;
 
     // Validation rules
     protected $rules = [
         'title' => 'required|min:5|max:255',
         'content' => 'required|min:10',
-        'category' => 'required'
+        'category' => 'required',
+        'media' => 'nullable|file|mimes:jpg,jpeg,png,gif,mp4,mov,avi,wmv|max:20480'
     ];
 
     /**
@@ -45,11 +51,34 @@ class EditPost extends Component
         // Validate input
         $this->validate();
 
+        $mediaPath = $this->post->media_path;
+        $mediaType = $this->post->media_type;
+
+        if ($this->removeMedia) {
+            $mediaPath = null;
+            $mediaType = null;
+        }
+
+        if ($this->media) {
+            $mediaPath = $this->media->store('posts', 'public');
+            $mime = $this->media->getMimeType();
+
+            if (str_starts_with($mime, 'image/')) {
+                $mediaType = 'image';
+            } elseif (str_starts_with($mime, 'video/')) {
+                $mediaType = 'video';
+            } else {
+                $mediaType = null;
+            }
+        }
+
         // Update post
         $this->post->update([
             'title' => $this->title,
             'content' => $this->content,
             'category' => $this->category,
+            'media_path' => $mediaPath,
+            'media_type' => $mediaType,
         ]);
 
         // Flash success message

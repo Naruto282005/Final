@@ -106,7 +106,22 @@
                 </div>
                 
                 <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ $post->title }}</h1>
-                <div class="prose max-w-none text-gray-700 whitespace-pre-wrap">{{ $post->content }}</div>
+
+                @if ($post->media_path)
+                    <div class="mb-6 flex justify-center">
+                        @if ($post->media_type === 'image')
+                            <img src="{{ asset('storage/' . $post->media_path) }}" alt="Post media" class="w-full max-w-xl max-h-96 object-contain rounded-lg border border-gray-200">
+                        @elseif ($post->media_type === 'video')
+                            <video controls class="w-full max-w-xl max-h-96 rounded-lg border border-gray-200">
+                                <source src="{{ asset('storage/' . $post->media_path) }}">
+                            </video>
+                        @endif
+                    </div>
+                @endif
+
+                <div class="mt-4 text-gray-700">
+                    <p class="whitespace-pre-wrap leading-relaxed" style="word-break: break-word; overflow-wrap: anywhere;">{{ trim($post->content) }}</p>
+                </div>
             </div>
         </div>
     </div>

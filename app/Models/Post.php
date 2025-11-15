@@ -10,7 +10,7 @@ class Post extends Model
     use HasFactory;
 
     // Allow mass assignment for these fields
-    protected $fillable = ['user_id', 'title', 'content', 'category', 'vote_count', 'comment_count'];
+    protected $fillable = ['user_id', 'title', 'content', 'category', 'vote_count', 'comment_count', 'media_path', 'media_type'];
 
     /**
      * Get the user who created this post
